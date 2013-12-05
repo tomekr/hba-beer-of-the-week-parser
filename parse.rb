@@ -21,7 +21,7 @@ recipe_links.each do |link|
   page = agent.get(link.href)
   main_text = page.at('div.mainText')
 
-  if (name_node = main_text.at('h1').text.match(/Beer Recipe of the Week:\s*(.*\z)/))
+  if (name_node = main_text.at('h1').text.match(/Beer Recipe of the Week:\s*(.*\z)/i))
     name = name_node[1]
   else
     name = nil
