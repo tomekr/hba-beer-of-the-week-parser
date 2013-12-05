@@ -11,7 +11,7 @@ class RecipeBook
   def to_html
     #TODO Should be more dynamic instead of changing list
     #everytime we add an attribute
-    table = Table(%w[name size link yeast temperatures])
+    table = Table(%w[name size link yeast temperatures fermentation_time])
 
     # Add each recipe to the Ruport table
     @recipes.each do |recipe|
@@ -19,7 +19,8 @@ class RecipeBook
                 recipe.size,
                 recipe.link,
                 recipe.yeast,
-                recipe.temperatures.join("\n")] 
+                recipe.temperatures,
+                recipe.fermentation_time] 
     end
 
     # Write out to HTML file

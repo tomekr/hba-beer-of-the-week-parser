@@ -8,6 +8,13 @@ def parse_main_text(text)
   
 end
 
+def search_text_blobs_for(text, regex)
+  results = text.search('//text()').reject{|text_node| text_node.text =~ /javascript/i}
+                                   .select{|text_node| text_node.text =~ regex}
+  return nil if results.empty?
+  results
+end
+
 agent = Mechanize.new
 page = agent.get('http://www.homebrewersassociation.org/sitemap/')
 
@@ -17,7 +24,7 @@ end
 
 recipe_book = RecipeBook.new
 
-recipe_links.each do |link|
+recipe_links[1..10].each do |link|
   page = agent.get(link.href)
   main_text = page.at('div.mainText')
 
@@ -26,6 +33,7 @@ recipe_links.each do |link|
   else
     name = nil
   end
+
   if (size_node = main_text.at("//*[contains(text(),'gal')]"))
     size = size_node.text
   else
@@ -38,13 +46,20 @@ recipe_links.each do |link|
     yeast = nil
   end
 
-  if (temperature_nodes = main_text.search("//*[contains(text(),'°')]"))
-    temperatures = main_text.search("//*[contains(text(),'°')]").map{|x| x.text }
+  # Regular expressions are AWESOME
+  if (temperature_nodes = search_text_blobs_for(main_text, /(°|\d+[FfCc])/))
+    temperatures = temperature_nodes.map{|x| x.text }.join("\n")
   else
     temperatures = nil
   end
 
-  recipe_book.add(Recipe.new(name, size, link.to_s, yeast, temperatures))
+  if (fermentation_nodes = search_text_blobs_for(main_text, /ferment.*(week|day)/i))
+    fermentation_time = fermentation_nodes.map{|x| x.text }.join("\n")
+  else
+    fermentation_time = nil
+  end
+
+  recipe_book.add(Recipe.new(name, size, link.to_s, yeast, temperatures, fermentation_time))
 end
 
 recipe_book.to_html
