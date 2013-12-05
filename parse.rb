@@ -24,7 +24,7 @@ end
 
 recipe_book = RecipeBook.new
 
-recipe_links[1..10].each do |link|
+recipe_links.each do |link|
   page = agent.get(link.href)
   main_text = page.at('div.mainText')
 
