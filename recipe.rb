@@ -6,7 +6,7 @@ class Recipe
     @size = size
     @link = link
     @yeast = yeast
-    @temperatures = temperatures
+    @temperatures = temperatures || []
 
     #TODO 
     #@grains = grains
@@ -24,7 +24,4 @@ class Recipe
     }
   end
 
-  def to_html
-    #TODO
-  end
 end

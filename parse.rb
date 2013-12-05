@@ -1,7 +1,8 @@
 require 'mechanize'
 require 'ruport'
-load 'recipe.rb'
 require 'pry'
+load 'recipe.rb'
+load 'recipe_book.rb'
 
 def parse_main_text(text)
   
@@ -14,14 +15,17 @@ recipe_links = page.links_with(:href => /^http?/).select do |link|
   link.href =~ /recipe-of-the-week/
 end
 
-recipes = []
+recipe_book = RecipeBook.new
 
-recipe_links[1..10].each do |link|
+recipe_links.each do |link|
   page = agent.get(link.href)
   main_text = page.at('div.mainText')
 
-
-  name = main_text.at('h1').text.match(/Beer Recipe of the Week:\s*(.*\z)/)[1]
+  if (name_node = main_text.at('h1').text.match(/Beer Recipe of the Week:\s*(.*\z)/))
+    name = name_node[1]
+  else
+    name = nil
+  end
   if (size_node = main_text.at("//*[contains(text(),'gal')]"))
     size = size_node.text
   else
@@ -40,5 +44,9 @@ recipe_links[1..10].each do |link|
     temperatures = nil
   end
 
-  recipes << Recipe.new(name, size, link.to_s, yeast, temperatures)
+  recipe_book.add(Recipe.new(name, size, link.to_s, yeast, temperatures))
 end
+
+recipe_book.to_html
+
+
