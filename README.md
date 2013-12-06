@@ -4,7 +4,7 @@
 
 `bundle install` *
 
-* `gem install bundler` if you don't have the bundler gem installed
+* first run `gem install bundler` if you don't have the bundler gem installed
   already
 
 2. Run parser
