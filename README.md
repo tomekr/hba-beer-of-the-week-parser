@@ -1,6 +1,6 @@
 ## Usage
 
-1. Install games
+1. Install gems
 
 `bundle install` *
 
